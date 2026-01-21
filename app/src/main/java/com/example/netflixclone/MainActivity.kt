@@ -10,7 +10,7 @@ import com.example.netflixclone.ui.theme.NetflixCloneTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.netflixclone.ui.profile.ProfileScreen
+import com.example.netflixclone.ui.profile.ChooseProfileScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
                             composable("splash") {
                                 SplashScreen()
                                 LaunchedEffect(Unit) {
-                                    kotlinx.coroutines.delay(2000)
+                                    kotlinx.coroutines.delay(1000)
                                     navController.navigate("login") {
                                         popUpTo("splash") { inclusive = true }
                                     }
@@ -34,15 +34,22 @@ class MainActivity : ComponentActivity() {
                             }
                             composable("login") {
                                 LoginSignupScreen(
-                                    onLoginClick = { navController.navigate("profile") },
-                                    onSignupClick = { navController.navigate("profile") }
+                                        onLoginClick = { navController.navigate("chooseProfile") },
+                                        onSignupClick = { navController.navigate("chooseProfile") }
                                 )
                             }
 
-
-                            composable("profile") {
-                                ProfileScreen()
+                            composable("chooseProfile") {
+                                ChooseProfileScreen { profile ->
+                                    if (profile.isKids) {
+                                        navController.navigate("home_kids")
+                                    } else if (profile.name == "Add Profile") {
+                                    } else {
+                                        navController.navigate("home")
+                                    }
+                                }
                             }
+
                         }
                     }
                 }
