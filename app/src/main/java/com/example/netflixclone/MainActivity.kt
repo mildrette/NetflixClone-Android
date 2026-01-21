@@ -10,6 +10,10 @@ import com.example.netflixclone.ui.theme.NetflixCloneTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.netflixclone.ui.home.HomeScreen
+import com.example.netflixclone.ui.home.KidsHomeScreen
+import com.example.netflixclone.ui.movie.MovieDetail
+import com.example.netflixclone.ui.movie.MovieDetailScreen
 import com.example.netflixclone.ui.profile.ChooseProfileScreen
 
 class MainActivity : ComponentActivity() {
@@ -48,6 +52,27 @@ class MainActivity : ComponentActivity() {
                                         navController.navigate("home")
                                     }
                                 }
+                            }
+
+                            composable("home") {
+                                HomeScreen()
+                            }
+
+                            composable("home_kids") {
+                                KidsHomeScreen()
+                            }
+
+
+                            composable("movieDetail/{title}") { backStackEntry ->
+                                val movieTitle = backStackEntry.arguments?.getString("title") ?: "Unknown"
+                                val movie = MovieDetail(
+                                    title = movieTitle,
+                                    year = "2024",
+                                    director = "John Doe",
+                                    description = "This is a sample description for $movieTitle",
+                                    thumbnailRes = R.drawable.avatar
+                                )
+                                MovieDetailScreen(movie = movie)
                             }
 
                         }
