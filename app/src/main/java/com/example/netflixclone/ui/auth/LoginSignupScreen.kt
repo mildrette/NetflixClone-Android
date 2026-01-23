@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -23,6 +24,16 @@ fun LoginSignupScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    val isFormValid = if (isLogin) {
+        email.isNotBlank() && password.isNotBlank()
+    } else {
+        email.isNotBlank() &&
+                password.isNotBlank() &&
+                confirmPassword.isNotBlank() &&
+                password == confirmPassword
+    }
 
     Box(
         modifier = Modifier
@@ -42,7 +53,6 @@ fun LoginSignupScreen(
             )
 
             Spacer(modifier = Modifier.height(48.dp))
-
 
             OutlinedTextField(
                 value = email,
@@ -83,17 +93,36 @@ fun LoginSignupScreen(
                 )
             }
 
+            errorMessage?.let {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = it,
+                    color = Color.Red,
+                    fontSize = 14.sp
+                )
+            }
+
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
+                enabled = isFormValid,
                 onClick = {
+                    errorMessage = null
+
                     if (isLogin) {
-                        onLoginClick()
+                        if (password == "0000") {
+                            onLoginClick()
+                        } else {
+                            errorMessage = "Incorrect password"
+                        }
                     } else {
                         onSignupClick()
                     }
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Red,
+                    disabledContainerColor = Color.DarkGray
+                ),
                 shape = RoundedCornerShape(4.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,9 +137,17 @@ fun LoginSignupScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            TextButton(onClick = { isLogin = !isLogin }) {
+            TextButton(onClick = {
+                isLogin = !isLogin
+                errorMessage = null
+                password = ""
+                confirmPassword = ""
+            }) {
                 Text(
-                    text = if (isLogin) "New to Netflix? Sign up now" else "Already have an account? Login",
+                    text = if (isLogin)
+                        "New to Netflix? Sign up now"
+                    else
+                        "Already have an account? Login",
                     color = Color.White.copy(alpha = 0.7f),
                     fontSize = 14.sp
                 )
@@ -118,3 +155,20 @@ fun LoginSignupScreen(
         }
     }
 }
+
+
+
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF000000
+)
+@Composable
+fun LoginSignupScreenPreview_Signup() {
+    var showSignup by remember { mutableStateOf(true) }
+
+    LoginSignupScreen(
+        onLoginClick = {},
+        onSignupClick = {}
+    )
+}
+
